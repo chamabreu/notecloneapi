@@ -1,6 +1,6 @@
+const { User, Data } = require("../config/mongooseConfig")
 const { hashPW, checkPW } = require("./bcryptHasher")
 
-const User = require("../config/mongooseConfig").User
 
 
 module.exports.registerUser = (req, res, next) => {
@@ -28,7 +28,7 @@ module.exports.registerUser = (req, res, next) => {
     /* after hashing completed */
     .then((hashedPW) => {
 
-      /* Create use with email and hashedPW */
+      /* Create user with email and hashedPW */
       const newUser = new User({
         email: email,
         password: hashedPW
@@ -36,7 +36,7 @@ module.exports.registerUser = (req, res, next) => {
 
       /*
         return the Promise from User.save(). the next .then function only gets triggered
-        when this promise is resolved / rejected
+        when this promise is resolved
       */
       return newUser.save()
     })
@@ -44,8 +44,22 @@ module.exports.registerUser = (req, res, next) => {
     /* gets the newUser from the newUser.save() */
     .then((newUser) => {
 
+      /* Create a userData Set for the user */
+      const newData = new Data({
+        user: newUser.email
+      })
+
+      /*
+        return the Promise from Data.save(). the next .then function only gets triggered
+        when this promise is resolved
+      */
+      return newData.save()
+    })
+
+
+    .then(() => {
       /* write it to the res.locals prop */
-      res.locals.newUser = newUser
+      res.locals.user = email
 
       /* and go next to the routes */
       next()
@@ -84,7 +98,7 @@ module.exports.logUserIn = (req, res, next) => {
         res.locals.user = email
         next()
 
-      }else {
+      } else {
         /* isCorrect is false if the user entered the wrong password */
         throw new Error('No valid email and password combination')
       }

@@ -1,3 +1,4 @@
+const { getUserData } = require('./dataManagement')
 
 const router = require('express').Router()
 
@@ -34,13 +35,16 @@ const logUserIn = require('./userManagement').logUserIn
 
 /* POST ROUTES */
 router.post('/register', registerUser, (req, res, next) => {
-  res.send("Registered: " + res.locals.newUser.email)
+  res.send("Registered: " + res.locals.user)
 })
 
 router.post('/login', logUserIn, (req, res, next) => {
   res.send("Welcome " + res.locals.user)
 })
 
+router.post('/data', getUserData, (req, res, next) => {
+  res.send(res.locals.userData)
+})
 
 
 // End Routes -----------------------------------------
