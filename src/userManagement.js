@@ -107,3 +107,12 @@ module.exports.logUserIn = (req, res, next) => {
     /* catches all errors occuring in the .then-Chain and send them to the errohandler */
     .catch(error => next(error))
 }
+
+
+module.exports.validateUser = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    next()
+  } else {
+    res.redirect('/login')
+  }
+}
