@@ -6,16 +6,17 @@ const { hashPW, checkPW } = require("./bcryptHasher")
 module.exports.registerUser = (req, res, next) => {
   /* Get the email from the Body */
   const email = req.body.email
-
+  
   /* Check if the email is already registered */
   User.findOne({ email: email })
-
-    /* userData can be null or userData, if user exists */
-    .then(userData => {
+  
+  /* userData can be null or userData, if user exists */
+  .then(userData => {
 
       if (userData) {
         /* If user does exist, throw Error and get catched at the end */
-        throw new Error('User already exists')
+        // throw new Error({status: 400, msg: 'User already exists'})
+        return Promise.reject({status: 400, msg: 'User already exists'})
       } else {
 
         /* No user exists, hash PW*/
@@ -66,7 +67,13 @@ module.exports.registerUser = (req, res, next) => {
     })
 
     /* catches all errors occuring in the .then-Chain and send them to the errohandler */
-    .catch(error => next(error))
+    .catch(error => {
+      if (error.status) {
+        return next({status: error.status, msg: error.msg})
+      }else {
+        return next(error)
+      }
+    })
 }
 
 module.exports.logUserIn = (req, res, next) => {
@@ -111,8 +118,8 @@ module.exports.logUserIn = (req, res, next) => {
 
 module.exports.validateUser = (req, res, next) => {
   if (req.isAuthenticated()) {
-    next()
+    return next()
   } else {
-    res.redirect('/login')
+    return next({status: 401, msg: "Not Logged in"})
   }
 }

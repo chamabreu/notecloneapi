@@ -12,7 +12,7 @@ const userFields = {
 const verificationCallBack = (email, plainPW, done) => {
   /* This Should only get called if there is no cookie with the request */
   /* If there is a valid cookie, the passport.deserializeUser should be called */
-
+  console.log("Verifitaion Callback")
 
   /* Find a user with that email */
   User.findOne({ email: email })
@@ -59,12 +59,15 @@ passport.use(strategy)
 
 /* Get the userID into the Cookie */
 passport.serializeUser((userID, done) => {
+  console.log("Serialization")
   done(null, userID)
 })
 
 
 /* Parse the userData from the DataBase with the userID from the Cookie */
 passport.deserializeUser((userID, done) => {
+  console.log("DE    Serialization")
+
   /* find a user with that userID */
   User.findById(userID)
 
