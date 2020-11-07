@@ -61,7 +61,7 @@ router.post('/login', (req, res, next) => {
   next()
 },passport.authenticate('local'), (req, res, next) => {
   console.log("LOGGED IN IN POST LOGIN WITH", req.user)
-  res.sendStatus(200)
+  res.send(req.user)
 })
 
 router.post('/data', validateUser, getUserData, (req, res, next) => {

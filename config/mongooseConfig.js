@@ -41,16 +41,18 @@ const dataSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  
-  
+
+
   /* Some items to get something from the DB for debugging */
-  lorem: {
-    type: String,
-    default: "The Lorem Text is the default Text"
-  },
-  ipsum: {
-    type: String,
-    default: "And then there is ipsum. Its also default, but a little different"
+  data: {
+    lorem: {
+      type: String,
+      default: "The Lorem Text is the default Text"
+    },
+    ipsum: {
+      type: String,
+      default: "And then there is ipsum. Its also default, but a little different"
+    }
   }
 })
 /* Create the Data model and export it later */

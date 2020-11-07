@@ -72,9 +72,9 @@ passport.deserializeUser((userID, done) => {
   User.findById(userID)
 
 
-    .then(userData => {
-      if (userData) {
-        done(null, userData)
+    .then(userCredentials => {
+      if (userCredentials) {
+        done(null, userCredentials)
       } else {
         done(new Error("No valid user in Cookie. Contact Support"))
       }
