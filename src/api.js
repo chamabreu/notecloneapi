@@ -33,22 +33,7 @@ const { validateUser } = require('./userManagement')
 
 
 /* GET ROUTES */
-router.get('/', (req, res) => {
-  res.send("HOMMEEEYYYY")
-})
 
-router.get('/login', (req, res) => {
-  res.send("Welcome to GET of login")
-})
-
-router.get('/success', validateUser, (req, res) => {
-  res.send("SUCCESS PAGE. Welcome " + req.user.email)
-})
-
-router.get('/failed', (req, res) => {
-  console.log("FAILED")
-  res.status(401).send("Failed")
-})
 
 
 /* POST ROUTES */
@@ -56,12 +41,15 @@ router.post('/register', registerUser, (req, res, next) => {
   res.send('registered successfully')
 })
 
-router.post('/login', (req, res, next) => {
-  console.log('IN LOGIN POST :>> ', req.body);
-  next()
-},passport.authenticate('local'), (req, res, next) => {
-  console.log("LOGGED IN IN POST LOGIN WITH", req.user)
+router.post('/login', passport.authenticate('local'), (req, res, next) => {
   res.send(req.user)
+})
+
+router.post('/logout', (req, res) => {
+  req.logOut()
+  req.session.destroy(() => {
+    res.send("Session Deleted")
+  })
 })
 
 router.post('/data', validateUser, getUserData, (req, res, next) => {
@@ -69,10 +57,6 @@ router.post('/data', validateUser, getUserData, (req, res, next) => {
 
   /* In res.locals.userData lays the userData from the matched userID of the cookie */
   res.send(res.locals.userData)
-})
-
-router.post('/react', registerUser, (req, res, next) => {
-  res.redirect('/login')
 })
 
 
