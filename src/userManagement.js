@@ -1,4 +1,4 @@
-const { User, Data } = require("../config/mongooseConfig")
+const { User } = require("../config/mongooseConfig")
 const { hashPW, checkPW } = require("./bcryptHasher")
 
 
@@ -45,23 +45,8 @@ module.exports.registerUser = (req, res, next) => {
     /* gets the newUser from the newUser.save() */
     .then((newUser) => {
 
-      /* Create a userData Set for the user */
-      const newData = new Data({
-        user: newUser.email
-
-      })
-
-      /*
-        return the Promise from Data.save(). the next .then function only gets triggered
-        when this promise is resolved
-      */
-      return newData.save()
-    })
-
-
-    .then(() => {
       /* write it to the res.locals prop */
-      res.locals.user = email
+      res.locals.user = newUser.email
 
       /* and go next to the routes */
       next()
@@ -123,4 +108,57 @@ module.exports.validateUser = (req, res, next) => {
   } else {
     return next({ status: 401, msg: "Not Logged in" })
   }
+}
+
+
+module.exports.getUserData = (req, res, next) => {
+  /*
+  the req.user is populated by the validation through Passport.
+  It gets created in the deserialization process
+  */
+  const email = req.user.email
+  User.findOne({ email: email })
+    .then(userData => {
+      if (userData) {
+        res.locals.user = userData.email
+        res.locals.data = userData.data
+        next()
+      } else {
+        throw new Error("Cant load Data. Please Contact support. ")
+      }
+    })
+    .catch(error => next(error))
+}
+
+
+module.exports.createNewPage = async (req, res, next) => {
+  const email = req.user.email
+
+  const update = await User.findOne({email: email})
+  console.log('update.data.pages :>> ', update.data.pages);
+  update.data.pages = ["animals"]
+  console.log('update.data.pages :>> ', update.data.pages);
+  await update.save()
+  next()
+  // User.findOne({email: email})
+  // .then(userData => {
+  //   if (userData) {
+  //     console.log("Some Info", userData.someInfo)
+  //     // let ar = userData.data.pages
+  //     // console.log("Before", ar)
+  //     // ar.push(String(Date.now()))
+  //     // console.log("After", ar)
+  //     // userData.data.pages = ["Hello=?"]
+  //     userData.someInfo = "Here is it"
+  //     userData.save()
+  //       .then(() => {
+  //         next()
+  //       })
+        
+  //   } else {
+  //     throw new Error("Cant load Data. Please Contact support. ")
+  //   }
+  // })
+  // .catch(error => next(error))
+
 }

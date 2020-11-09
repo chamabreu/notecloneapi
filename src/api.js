@@ -1,4 +1,4 @@
-const { getUserData } = require('./dataManagement')
+const { getUserData, createNewPage } = require('./userManagement')
 const router = require('express').Router()
 const passport = require('passport')
 
@@ -56,7 +56,11 @@ router.post('/data', validateUser, getUserData, (req, res, next) => {
   /* In req.user lays the credentials of the user itself */
 
   /* In res.locals.userData lays the userData from the matched userID of the cookie */
-  res.send(res.locals.userData)
+  res.send(res.locals)
+})
+
+router.post('/newPage', validateUser, createNewPage, (req, res) => {
+  res.send("ok")
 })
 
 

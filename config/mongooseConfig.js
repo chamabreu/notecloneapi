@@ -26,41 +26,20 @@ const userSchema = new mongoose.Schema({
     type: Number,
     required: true,
     default: 0
+  },
+
+  /* The data Object which holds all data of the User */
+  data: {
+    type: Object,
+    default: {
+      nodata: true
+    }
   }
 })
 /* Create the User model and export it later */
 /* This is used to create, save and update users */
 const User = mongoose.model("User", userSchema)
 
-
-
-/* Create Data Schema for user Data */
-const dataSchema = new mongoose.Schema({
-  /* User to know to which User the Data belongs */
-  user: {
-    type: String,
-    required: true
-  },
-
-
-  /* Some items to get something from the DB for debugging */
-  data: {
-    lorem: {
-      type: String,
-      default: "The Lorem Text is the default Text"
-    },
-    ipsum: {
-      type: String,
-      default: "And then there is ipsum. Its also default, but a little different"
-    }
-  }
-})
-/* Create the Data model and export it later */
-/* This is used to create, save and update Data */
-const Data = mongoose.model("Data", dataSchema)
-
-
 module.exports.User = User
-module.exports.Data = Data
 
 

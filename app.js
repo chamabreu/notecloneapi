@@ -15,7 +15,7 @@ app.use(session({
   saveUninitialized: true,
   secret: process.env.SESSION_SECRET,
   cookie: {
-    maxAge: 1000 * 60 * 5
+    maxAge: 1000 * 60 * 30
   },
   store: new MongoStore({ mongooseConnection: mongoose.connection })
 }))
@@ -27,8 +27,8 @@ require('./config/passportConfig')
 
 
 function log(req, res, next) {
-  console.log('SESSION PASSPORT :>> ', req.session.passport);
-  console.log('BODY :>> ', req.body);
+  // console.log('SESSION PASSPORT :>> ', req.session.passport);
+  // console.log('BODY :>> ', req.body);
   next()
 }
 
