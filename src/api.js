@@ -1,4 +1,4 @@
-const { getUserData, createNewPage, updatePageName } = require('./userManagement')
+const { getUserData, createNewPage, updatePageName, createSubPage, removePage } = require('./userManagement')
 const router = require('express').Router()
 const passport = require('passport')
 
@@ -68,7 +68,15 @@ function readOut(req, res, next) {
   next()
 }
 
-router.post('/updatePageName', readOut,validateUser, updatePageName, (req, res) => {
+router.post('/updatePageName',validateUser, updatePageName, (req, res) => {
+  res.send("OK")
+})
+
+router.post('/createSubPage', validateUser, createSubPage, (req, res) => {
+  res.send("OK")
+})
+
+router.post('/removePage', validateUser, removePage, (req, res) => {
   res.send("OK")
 })
 

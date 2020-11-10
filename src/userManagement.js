@@ -140,11 +140,13 @@ module.exports.createNewPage = async (req, res, next) => {
     { "email": email },
     {
       $addToSet: { "data.pages": pageDateID },
-      $set: { [`data.${pageDateID}`]: {
-        "name": pageDate,
-        "pages": [],
-        "data": {}
-      }}
+      $set: {
+        [`data.${pageDateID}`]: {
+          "name": pageDate,
+          "pages": [],
+          "data": {}
+        }
+      }
     }
   )
   next()
@@ -154,10 +156,83 @@ module.exports.updatePageName = async (req, res, next) => {
   const email = req.user.email
   const pageID = req.body.pageID
   const newName = req.body.newName
-  
+
   await User.findOneAndUpdate(
-    {"email": email},
-    {$set: {[`data.${pageID}.name`]: newName}}
+    { "email": email },
+    { $set: { [`data.${pageID}.name`]: newName } }
   )
   next()
 }
+
+module.exports.createSubPage = async (req, res, next) => {
+  const email = req.user.email
+  const pageDate = String(Date.now())
+  const pageDateID = `${pageDate}ID`
+  const parentID = req.body.parentPage
+
+  await User.findOneAndUpdate(
+    { "email": email },
+    {
+      $addToSet: { [`data.${parentID}.pages`]: pageDateID },
+      $set: {
+        [`data.${pageDateID}`]: {
+          "name": pageDate,
+          "pages": [],
+          "data": {}
+        }
+      }
+      // $addToSet: { "data.pages": pageDateID },
+      // $set: { [`data.${pageDateID}`]: {
+      //   "name": pageDate,
+      //   "pages": [],
+      //   "data": {}
+      // }}
+    }
+  )
+  next()
+}
+module.exports.removePage = async (req, res, next) => {
+  const email = req.user.email
+  const pageID = req.body.pageID
+  const userData = await User.findOne(
+    { "email": email }
+  )
+
+  // GET ALL NESTED SUBPAGES OF THAT PAGE TO DELETE THEM
+  const getSubPages = (pages) => {
+    console.log("\nChecking subpages:", pages)
+
+    if (pages.length === 0) {
+      console.log("No Pages given, return.\n\n")
+      return []
+
+
+    } else {
+      for (const subPage of pages) {
+        const nestedSP = userData.data[subPage].pages
+        console.log('subPage :>> ', subPage);
+        console.log("Fetching the nestedSP of", subPage)
+        getSubPages(nestedSP)
+
+      }
+
+
+
+    } // end else
+  }
+
+
+  // let allSubPagesArray = getSubPages(userData.data[pageID].pages)
+  let allSubPagesArray = getSubPages(userData.data[pageID].pages)
+  console.log("ALL SUB PAGES:", allSubPagesArray)
+
+
+  // await User.findOneAndUpdate(
+  //   { "email": email },
+  //   {
+  //     $unset : {[`data.${pageID}`]: ""}
+  //   }
+  // )
+  next()
+}
+

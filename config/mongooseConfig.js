@@ -32,12 +32,48 @@ const userSchema = new mongoose.Schema({
   data: {
     type: Object,
     default: {
-      pages: ["newPageID"],
-      newPageID: {
-        name: "New Page",
+      pages: ["TopPageID"],
+      TopPageID: {
+        name: "TopPageName",
+        pages: ["FirstSubID", "SecSubID", "ThirdSubID"],
+        data: {}
+      },
+      FirstSubID: {
+        name: "FirstSub",
         pages: [],
         data: {}
-      }
+      },
+      SecSubID: {
+        name: "SecSub",
+        pages: ["NestSec1ID", "NestSec2ID"],
+        data: {}
+      },
+      NestSec1ID: {
+        name: "NestSec1",
+        pages: [],
+        data: {}
+      },
+      NestSec2ID: {
+        name: "NestSec2",
+        pages: ["Arm1", "Bein2"],
+        data: {}
+      },
+      Arm1: {
+        name: "Arm",
+        pages: [],
+        data: {}
+      },
+      Bein2: {
+        name: "Bein",
+        pages: [],
+        data: {}
+      },
+      ThirdSubID: {
+        name: "ThirdSub",
+        pages: [],
+        data: {}
+      },
+      
     }
     /*
     {
