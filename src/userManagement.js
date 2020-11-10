@@ -133,32 +133,31 @@ module.exports.getUserData = (req, res, next) => {
 
 module.exports.createNewPage = async (req, res, next) => {
   const email = req.user.email
+  const pageDate = String(Date.now())
+  const pageDateID = `${pageDate}ID`
 
-  const update = await User.findOne({email: email})
-  console.log('update.data.pages :>> ', update.data.pages);
-  update.data.pages = ["animals"]
-  console.log('update.data.pages :>> ', update.data.pages);
-  await update.save()
+  await User.findOneAndUpdate(
+    { "email": email },
+    {
+      $addToSet: { "data.pages": pageDateID },
+      $set: { [`data.${pageDateID}`]: {
+        "name": pageDate,
+        "pages": [],
+        "data": {}
+      }}
+    }
+  )
   next()
-  // User.findOne({email: email})
-  // .then(userData => {
-  //   if (userData) {
-  //     console.log("Some Info", userData.someInfo)
-  //     // let ar = userData.data.pages
-  //     // console.log("Before", ar)
-  //     // ar.push(String(Date.now()))
-  //     // console.log("After", ar)
-  //     // userData.data.pages = ["Hello=?"]
-  //     userData.someInfo = "Here is it"
-  //     userData.save()
-  //       .then(() => {
-  //         next()
-  //       })
-        
-  //   } else {
-  //     throw new Error("Cant load Data. Please Contact support. ")
-  //   }
-  // })
-  // .catch(error => next(error))
+}
 
+module.exports.updatePageName = async (req, res, next) => {
+  const email = req.user.email
+  const pageID = req.body.pageID
+  const newName = req.body.newName
+  
+  await User.findOneAndUpdate(
+    {"email": email},
+    {$set: {[`data.${pageID}.name`]: newName}}
+  )
+  next()
 }

@@ -32,8 +32,38 @@ const userSchema = new mongoose.Schema({
   data: {
     type: Object,
     default: {
-      nodata: true
+      pages: ["newPageID"],
+      newPageID: {
+        name: "New Page",
+        pages: [],
+        data: {}
+      }
     }
+    /*
+    {
+      pages : ["pageID1", "pageID2", "pageID3"],
+      pageID1: {
+        name: "Page 1",
+        pages: []
+      },
+      pageID2: {
+        name: "Page 2",
+        pages: ["subPageID"]
+      },
+      pageID3: {
+        name: "Page 3",
+        pages: []
+      },
+      subPageID: {
+        name: "Sub Page",
+        pages: ["moreSubPageID"]
+      },
+      moreSubPageID: {
+        name: "More Sub Page",
+        pages: []
+      }
+    }
+    */
   }
 })
 /* Create the User model and export it later */
