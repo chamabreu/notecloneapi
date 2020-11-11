@@ -11,9 +11,10 @@ const app = express()
 /* MIDDLEWARES */
 app.use(express.json())
 app.use(cors({
-  origin: "http://localhost:3000",
+  origin: "https://simplenote.jmbcode.de",
   credentials: true
 }))
+
 app.use(session({
   resave: false,
   saveUninitialized: true,
