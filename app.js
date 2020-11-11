@@ -19,7 +19,8 @@ app.use(session({
   saveUninitialized: true,
   secret: process.env.SESSION_SECRET,
   cookie: {
-    maxAge: 1000 * 60 * 30
+    maxAge: 1000 * 60 * 30,
+    secure: true
   },
   store: new MongoStore({ mongooseConnection: mongoose.connection })
 }))
