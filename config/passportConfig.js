@@ -12,7 +12,6 @@ const userFields = {
 const verificationCallBack = (email, plainPW, done) => {
   /* This Should only get called if there is no cookie with the request */
   /* If there is a valid cookie, the passport.deserializeUser should be called */
-  console.log("Verifitaion Callback")
 
   /* Find a user with that email */
   User.findOne({ email: email })

@@ -26,22 +26,13 @@ app.use(passport.session())
 require('./config/passportConfig')
 
 
-function log(req, res, next) {
-  // console.log('SESSION PASSPORT :>> ', req.session.passport);
-  // console.log('BODY :>> ', req.body);
-  next()
-}
-
-
 /* ROUTES */
-app.use('/api', log, api)
+app.use('/api', api)
 
 
 
 /* ERRORHANDLERS */
 app.use((error, req, res, next) => {
-  console.log("IN ERROR HANDLER")
-  console.log(error);
 
   if (error.status) {
     res.status(error.status).send(error.msg)

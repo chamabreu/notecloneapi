@@ -144,6 +144,7 @@ module.exports.createNewPage = async (req, res, next) => {
         [`data.${pageDateID}`]: {
           "name": pageDate,
           "pages": [],
+          "parents": [],
           "data": {}
         }
       }
@@ -178,15 +179,11 @@ module.exports.createSubPage = async (req, res, next) => {
         [`data.${pageDateID}`]: {
           "name": pageDate,
           "pages": [],
+          "parents": [parentID],
           "data": {}
         }
       }
-      // $addToSet: { "data.pages": pageDateID },
-      // $set: { [`data.${pageDateID}`]: {
-      //   "name": pageDate,
-      //   "pages": [],
-      //   "data": {}
-      // }}
+
     }
   )
   next()
@@ -197,42 +194,52 @@ module.exports.removePage = async (req, res, next) => {
   const userData = await User.findOne(
     { "email": email }
   )
+  const parentPages = userData.data[pageID].parents
 
   // GET ALL NESTED SUBPAGES OF THAT PAGE TO DELETE THEM
-  const getSubPages = (pages) => {
-    console.log("\nChecking subpages:", pages)
-
-    if (pages.length === 0) {
-      console.log("No Pages given, return.\n\n")
-      return []
-
+  const getAllPagesOf = (selectedPage) => {
+    const nestedPages = userData.data[selectedPage].pages
+    if (nestedPages.length > 0) {
+      let childArray = []
+      for (const childID of nestedPages) {
+        childArray = [...childArray, ...getAllPagesOf(childID)]
+      }
+      return [selectedPage, ...childArray]
 
     } else {
-      for (const subPage of pages) {
-        const nestedSP = userData.data[subPage].pages
-        console.log('subPage :>> ', subPage);
-        console.log("Fetching the nestedSP of", subPage)
-        getSubPages(nestedSP)
-
-      }
-
-
-
-    } // end else
+      return [selectedPage]
+    }
   }
 
 
-  // let allSubPagesArray = getSubPages(userData.data[pageID].pages)
-  let allSubPagesArray = getSubPages(userData.data[pageID].pages)
-  console.log("ALL SUB PAGES:", allSubPagesArray)
+  
+  let unsetModifier = {
+    $pull: {},
+    $unset: {}
+  }
+
+  /* Get all subpages of pageID to delete */
+  let allSubPagesArray = getAllPagesOf(pageID)
+  allSubPagesArray.forEach(subPage => {
+    unsetModifier.$unset[`data.${subPage}`] = ""
+  });
+  
+  /* Get the parent Page of pageID to delete */
+  if (parentPages.length > 0) {
+    parentPages.forEach(parentPage => {
+      unsetModifier.$pull[`data.${parentPage}.pages`] = pageID
+    });
+  }else {
+    unsetModifier.$pull["data.pages"] = pageID
+  }
+
+  /* Delete execution */
+  await User.findOneAndUpdate(
+    { "email": email },
+    unsetModifier
+  )
 
 
-  // await User.findOneAndUpdate(
-  //   { "email": email },
-  //   {
-  //     $unset : {[`data.${pageID}`]: ""}
-  //   }
-  // )
   next()
 }
 

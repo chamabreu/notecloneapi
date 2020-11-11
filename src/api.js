@@ -63,11 +63,6 @@ router.post('/newPage', validateUser, createNewPage, (req, res) => {
   res.send("ok")
 })
 
-function readOut(req, res, next) {
-  console.log('req.body :>> ', req.body);
-  next()
-}
-
 router.post('/updatePageName',validateUser, updatePageName, (req, res) => {
   res.send("OK")
 })

@@ -32,76 +32,65 @@ const userSchema = new mongoose.Schema({
   data: {
     type: Object,
     default: {
+      pages: []
+    }
+
+    /*
+    {
       pages: ["TopPageID"],
       TopPageID: {
         name: "TopPageName",
         pages: ["FirstSubID", "SecSubID", "ThirdSubID"],
+        parents: [],
         data: {}
       },
       FirstSubID: {
         name: "FirstSub",
         pages: [],
+        parents: ["TopPageID"],
         data: {}
       },
       SecSubID: {
         name: "SecSub",
         pages: ["NestSec1ID", "NestSec2ID"],
+        parents: ["TopPageID"],
         data: {}
       },
       NestSec1ID: {
         name: "NestSec1",
         pages: [],
+        parents: ["SecSubID"],
         data: {}
       },
       NestSec2ID: {
         name: "NestSec2",
         pages: ["Arm1", "Bein2"],
+        parents: ["SecSubID"],
         data: {}
       },
       Arm1: {
         name: "Arm",
         pages: [],
+        parents: ["NestSec2ID"],
         data: {}
       },
       Bein2: {
         name: "Bein",
         pages: [],
+        parents: ["NestSec2ID"],
         data: {}
       },
       ThirdSubID: {
         name: "ThirdSub",
         pages: [],
+        parents: ["TopPageID"],
         data: {}
       },
-      
-    }
-    /*
-    {
-      pages : ["pageID1", "pageID2", "pageID3"],
-      pageID1: {
-        name: "Page 1",
-        pages: []
-      },
-      pageID2: {
-        name: "Page 2",
-        pages: ["subPageID"]
-      },
-      pageID3: {
-        name: "Page 3",
-        pages: []
-      },
-      subPageID: {
-        name: "Sub Page",
-        pages: ["moreSubPageID"]
-      },
-      moreSubPageID: {
-        name: "More Sub Page",
-        pages: []
-      }
     }
     */
   }
 })
+
 /* Create the User model and export it later */
 /* This is used to create, save and update users */
 const User = mongoose.model("User", userSchema)
