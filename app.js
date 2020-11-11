@@ -4,11 +4,13 @@ const api = require('./src/api')
 const passport = require('passport')
 const mongoose = require('mongoose')
 const MongoStore = require('connect-mongo')(session)
+const cors = require('cors')
 
 const app = express()
 
 /* MIDDLEWARES */
 app.use(express.json())
+app.use(cors())
 
 app.use(session({
   resave: false,
