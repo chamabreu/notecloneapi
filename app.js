@@ -8,10 +8,13 @@ const cors = require('cors')
 
 const app = express()
 
+
 /* MIDDLEWARES */
 app.use(express.json())
 app.use(cors({
-  origin: "https://simplenote.jmbcode.de",
+  origin: (process.env.DEV_MODE === "true") 
+  ? "" 
+  : "https://simplenote.jmbcode.de",
   credentials: true
 }))
 
