@@ -42,7 +42,7 @@ router.post('/register', registerUser, (req, res, next) => {
 })
 
 router.post('/login', passport.authenticate('local'), (req, res, next) => {
-  res.send(req.user)
+  res.send(req.user.email)
 })
 
 router.post('/logout', (req, res) => {
@@ -52,7 +52,7 @@ router.post('/logout', (req, res) => {
   })
 })
 
-router.post('/data', validateUser, getUserData, (req, res, next) => {
+router.post('/getData', validateUser, getUserData, (req, res, next) => {
   /* In req.user lays the credentials of the user itself */
 
   /* In res.locals.userData lays the userData from the matched userID of the cookie */
@@ -60,19 +60,24 @@ router.post('/data', validateUser, getUserData, (req, res, next) => {
 })
 
 router.post('/newPage', validateUser, createNewPage, (req, res) => {
-  res.send("ok")
+  res.send(res.locals)
 })
 
 router.post('/updatePageName',validateUser, updatePageName, (req, res) => {
-  res.send("OK")
+  res.send(res.locals)
 })
 
 router.post('/createSubPage', validateUser, createSubPage, (req, res) => {
-  res.send("OK")
+  res.send(res.locals)
 })
 
 router.post('/removePage', validateUser, removePage, (req, res) => {
-  res.send("OK")
+  res.send(res.locals)
+})
+
+router.post('/authedStatus', validateUser, (req, res) => {
+  console.log(req.user)
+  res.send(req.user.email)
 })
 
 

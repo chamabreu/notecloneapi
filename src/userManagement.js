@@ -150,6 +150,15 @@ module.exports.createNewPage = async (req, res, next) => {
       }
     }
   )
+
+  let userData = await User.findOne({ email: email })
+  if (userData) {
+    res.locals.user = userData.email
+    res.locals.data = userData.data
+    next()
+  } else {
+    throw new Error("Cant load Data. Please Contact support. ")
+  }
   next()
 }
 
@@ -158,10 +167,21 @@ module.exports.updatePageName = async (req, res, next) => {
   const pageID = req.body.pageID
   const newName = req.body.newName
 
+
   await User.findOneAndUpdate(
     { "email": email },
     { $set: { [`data.${pageID}.name`]: newName } }
   )
+
+  let userData = await User.findOne({ email: email })
+  if (userData) {
+    res.locals.user = userData.email
+    res.locals.data = userData.data
+    next()
+  } else {
+    throw new Error("Cant load Data. Please Contact support. ")
+  }
+
   next()
 }
 
@@ -186,6 +206,16 @@ module.exports.createSubPage = async (req, res, next) => {
 
     }
   )
+
+  let userData = await User.findOne({ email: email })
+  if (userData) {
+    res.locals.user = userData.email
+    res.locals.data = userData.data
+    next()
+  } else {
+    throw new Error("Cant load Data. Please Contact support. ")
+  }
+
   next()
 }
 module.exports.removePage = async (req, res, next) => {
@@ -212,7 +242,7 @@ module.exports.removePage = async (req, res, next) => {
   }
 
 
-  
+
   let unsetModifier = {
     $pull: {},
     $unset: {}
@@ -223,13 +253,13 @@ module.exports.removePage = async (req, res, next) => {
   allSubPagesArray.forEach(subPage => {
     unsetModifier.$unset[`data.${subPage}`] = ""
   });
-  
+
   /* Get the parent Page of pageID to delete */
   if (parentPages.length > 0) {
     parentPages.forEach(parentPage => {
       unsetModifier.$pull[`data.${parentPage}.pages`] = pageID
     });
-  }else {
+  } else {
     unsetModifier.$pull["data.pages"] = pageID
   }
 
@@ -238,6 +268,15 @@ module.exports.removePage = async (req, res, next) => {
     { "email": email },
     unsetModifier
   )
+
+  let newUserData = await User.findOne({ email: email })
+  if (newUserData) {
+    res.locals.user = newUserData.email
+    res.locals.data = newUserData.data
+    next()
+  } else {
+    throw new Error("Cant load Data. Please Contact support. ")
+  }
 
 
   next()
