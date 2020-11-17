@@ -136,7 +136,7 @@ module.exports.createNewPage = async (req, res, next) => {
   const pageDate = String(Date.now())
   const pageDateID = `${pageDate}ID`
 
-  await User.findOneAndUpdate(
+  let newData = await User.findOneAndUpdate(
     { "email": email },
     {
       $addToSet: { "data.pages": pageDateID },
@@ -145,20 +145,19 @@ module.exports.createNewPage = async (req, res, next) => {
           "name": pageDate,
           "pages": [],
           "parents": [],
-          "data": {}
+          "data": { pageText: "Top Page Default"}
         }
       }
+    },
+    {
+      new: true,
+      useFindAndModify: false
     }
   )
 
-  let userData = await User.findOne({ email: email })
-  if (userData) {
-    res.locals.user = userData.email
-    res.locals.data = userData.data
-    next()
-  } else {
-    throw new Error("Cant load Data. Please Contact support. ")
-  }
+  res.locals.user = newData.email
+  res.locals.data = newData.data
+
   next()
 }
 
@@ -168,19 +167,38 @@ module.exports.updatePageName = async (req, res, next) => {
   const newName = req.body.newName
 
 
-  await User.findOneAndUpdate(
+  let newData = await User.findOneAndUpdate(
     { "email": email },
-    { $set: { [`data.${pageID}.name`]: newName } }
+    { $set: { [`data.${pageID}.name`]: newName } }, {
+    new: true,
+    useFindAndModify: false
+  }
   )
 
-  let userData = await User.findOne({ email: email })
-  if (userData) {
-    res.locals.user = userData.email
-    res.locals.data = userData.data
-    next()
-  } else {
-    throw new Error("Cant load Data. Please Contact support. ")
+  res.locals.user = newData.email
+  res.locals.data = newData.data
+
+  next()
+}
+
+
+
+module.exports.updatePageText = async (req, res, next) => {
+  const email = req.user.email
+  const pageID = req.body.pageID
+  const newText = req.body.pageText
+
+
+  let newData = await User.findOneAndUpdate(
+    { "email": email },
+    { $set: { [`data.${pageID}.data.pageText`]: newText } }, {
+    new: true,
+    useFindAndModify: false
   }
+  )
+
+  res.locals.user = newData.email
+  res.locals.data = newData.data
 
   next()
 }
@@ -191,7 +209,7 @@ module.exports.createSubPage = async (req, res, next) => {
   const pageDateID = `${pageDate}ID`
   const parentID = req.body.parentPage
 
-  await User.findOneAndUpdate(
+  let newData = await User.findOneAndUpdate(
     { "email": email },
     {
       $addToSet: { [`data.${parentID}.pages`]: pageDateID },
@@ -200,24 +218,28 @@ module.exports.createSubPage = async (req, res, next) => {
           "name": pageDate,
           "pages": [],
           "parents": [parentID],
-          "data": {}
+          "data": { pageText: "Sub Page Default"}
         }
       }
-
+    },
+    {
+      new: true,
+      useFindAndModify: false
     }
   )
 
-  let userData = await User.findOne({ email: email })
-  if (userData) {
-    res.locals.user = userData.email
-    res.locals.data = userData.data
-    next()
-  } else {
-    throw new Error("Cant load Data. Please Contact support. ")
-  }
+  res.locals.user = newData.email
+  res.locals.data = newData.data
 
   next()
 }
+
+
+
+
+
+
+
 module.exports.removePage = async (req, res, next) => {
   const email = req.user.email
   const pageID = req.body.pageID
@@ -264,20 +286,17 @@ module.exports.removePage = async (req, res, next) => {
   }
 
   /* Delete execution */
-  await User.findOneAndUpdate(
+  let newData = await User.findOneAndUpdate(
     { "email": email },
-    unsetModifier
+    unsetModifier,
+    {
+      new: true,
+      useFindAndModify: false
+    }
   )
 
-  let newUserData = await User.findOne({ email: email })
-  if (newUserData) {
-    res.locals.user = newUserData.email
-    res.locals.data = newUserData.data
-    next()
-  } else {
-    throw new Error("Cant load Data. Please Contact support. ")
-  }
-
+  res.locals.user = newData.email
+  res.locals.data = newData.data
 
   next()
 }
