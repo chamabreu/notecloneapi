@@ -32,7 +32,12 @@ const userSchema = new mongoose.Schema({
   data: {
     type: Object,
     default: {
-      pages: []
+      name: "",
+      pages: [],
+      parents: [],
+      data: {
+        pageText: "Default Text"
+      }
     }
 
     /*
